@@ -25,7 +25,7 @@ export default function FileUpload() {
 
   const validateFile = file => {
     const validTypes = ["audio/m4a", "audio/mp4", "audio/x-m4a"]
-    const maxSize = 100 * 1024 * 1024 // 100MB
+    const maxSize = 25 * 1024 * 1024 // 25MB (Whisper API limit)
 
     if (!validTypes.includes(file.type) && !file.name.toLowerCase().endsWith(".m4a")) {
       alert("Please upload only M4A audio files.")
@@ -33,7 +33,7 @@ export default function FileUpload() {
     }
 
     if (file.size > maxSize) {
-      alert("File size must be less than 100MB.")
+      alert("File size must be less than 25MB (OpenAI Whisper API limit).")
       return false
     }
 
@@ -48,13 +48,30 @@ export default function FileUpload() {
     return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
 
-  const simulateProcessing = (fileId) => {
-    let progress = 0
-    const interval = setInterval(() => {
-      progress += Math.random() * 15
-      if (progress >= 100) {
-        progress = 100
-        clearInterval(interval)
+  const processFileWithAPI = async (fileId, file) => {
+    try {
+      // Update status to uploading
+      setUploadedFiles((prev) =>
+        prev.map((f) => f.id === fileId ? { ...f, status: "uploading", progress: 10 } : f)
+      )
+
+      const formData = new FormData()
+      formData.append('audio', file)
+
+      // Update to processing
+      setUploadedFiles((prev) =>
+        prev.map((f) => f.id === fileId ? { ...f, status: "processing", progress: 50 } : f)
+      )
+
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        // Success
         setUploadedFiles((prev) =>
           prev.map((f) =>
             f.id === fileId
@@ -62,17 +79,44 @@ export default function FileUpload() {
                   ...f,
                   status: "completed",
                   progress: 100,
-                  transcription:
-                    "Good morning everyone, let's start today's meeting by reviewing the quarterly results. As you can see from the presentation, we've exceeded our targets by 15% this quarter...",
-                  duration: "15:42",
+                  transcription: result.transcription,
+                  requestId: result.requestId,
+                  timestamp: result.timestamp,
                 }
-              : f))
+              : f
+          )
+        )
       } else {
+        // Error from API
         setUploadedFiles((prev) =>
           prev.map((f) =>
-            f.id === fileId ? { ...f, progress, status: progress < 50 ? "uploading" : "processing" } : f))
+            f.id === fileId
+              ? {
+                  ...f,
+                  status: "error",
+                  progress: 0,
+                  error: result.error || 'Failed to process audio file',
+                }
+              : f
+          )
+        )
       }
-    }, 200)
+    } catch (error) {
+      // Network or other error
+      console.error('Upload error:', error)
+      setUploadedFiles((prev) =>
+        prev.map((f) =>
+          f.id === fileId
+            ? {
+                ...f,
+                status: "error",
+                progress: 0,
+                error: 'Network error. Please try again.',
+              }
+            : f
+        )
+      )
+    }
   }
 
   const processFiles = (files) => {
@@ -84,12 +128,12 @@ export default function FileUpload() {
         const uploadedFile = {
           file,
           id: fileId,
-          status: "uploading",
+          status: "preparing",
           progress: 0,
         }
 
         setUploadedFiles((prev) => [...prev, uploadedFile])
-        simulateProcessing(fileId)
+        processFileWithAPI(fileId, file)
       }
     })
   }
@@ -186,7 +230,7 @@ export default function FileUpload() {
 
           <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
             <Badge variant="secondary">M4A files only</Badge>
-            <Badge variant="secondary">Max 100MB per file</Badge>
+            <Badge variant="secondary">Max 25MB per file</Badge>
             <Badge variant="secondary">Multiple files supported</Badge>
           </div>
 
@@ -245,12 +289,35 @@ export default function FileUpload() {
                   </div>
                 )}
 
+                {/* Error Display */}
+                {uploadedFile.status === "error" && uploadedFile.error && (
+                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center mb-2">
+                      <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
+                      <p className="font-medium text-sm text-red-700">Error</p>
+                    </div>
+                    <p className="text-sm text-red-600">{uploadedFile.error}</p>
+                  </div>
+                )}
+
                 {/* Transcription Preview */}
                 {uploadedFile.transcription && (
                   <div className="mt-4 p-3 bg-muted rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="font-medium text-sm">Transcription Preview:</p>
-                      <Button variant="outline" size="sm">
+                      <p className="font-medium text-sm">Transcription:</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          const element = document.createElement('a');
+                          const file = new Blob([uploadedFile.transcription], {type: 'text/plain'});
+                          element.href = URL.createObjectURL(file);
+                          element.download = `${uploadedFile.file.name}_transcription.txt`;
+                          document.body.appendChild(element);
+                          element.click();
+                          document.body.removeChild(element);
+                        }}
+                      >
                         Download Full Text
                       </Button>
                     </div>
