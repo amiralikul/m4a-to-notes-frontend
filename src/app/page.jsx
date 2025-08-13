@@ -14,7 +14,7 @@ export default function HomePage() {
           <FileAudio className="h-6 w-6 mr-2" />
           <span className="font-bold">AudioScribe</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className="ml-auto flex gap-4  sm:gap-6">
           <Link
             className="text-sm font-medium hover:underline underline-offset-4"
             href="#features">
