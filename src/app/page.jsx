@@ -38,6 +38,30 @@ export default function HomePage() {
         </nav>
       </header>
       <main className="flex-1">
+        {/* Interactive Upload Section */}
+        <section className="w-full py-12 md:py-24 lg:py-24 bg-muted">
+          <div className="container px-4 md:px-6">
+            <div
+              className="flex flex-col items-center justify-center space-y-8 text-center">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
+                  Start Converting Your M4A Files
+                </h2>
+                <p
+                  className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Upload your audio files and watch them transform into accurate text transcriptions in real-time.
+                </p>
+              </div>
+
+              <FileUpload />
+
+              <p className="text-xs text-muted-foreground">
+                No credit card required • First 30 minutes free • Files automatically deleted after 24 hours
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Hero Section */}
         <section className="w-full py-6 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
@@ -227,30 +251,6 @@ export default function HomePage() {
                   </Card>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Interactive Upload Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-          <div className="container px-4 md:px-6">
-            <div
-              className="flex flex-col items-center justify-center space-y-8 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                  Start Converting Your M4A Files
-                </h2>
-                <p
-                  className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Upload your audio files and watch them transform into accurate text transcriptions in real-time.
-                </p>
-              </div>
-
-              <FileUpload />
-
-              <p className="text-xs text-muted-foreground">
-                No credit card required • First 30 minutes free • Files automatically deleted after 24 hours
-              </p>
             </div>
           </div>
         </section>

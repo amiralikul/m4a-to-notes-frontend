@@ -2,16 +2,13 @@
 import { useState, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { Upload, FileAudio, X, CheckCircle, AlertCircle, Play, Pause } from "lucide-react"
+import { Upload, FileAudio, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 
 export default function FileUpload() {
   const [isDragOver, setIsDragOver] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState([])
-  const [isPlaying, setIsPlaying] = useState(null)
   const fileInputRef = useRef(null)
-  const audioRef = useRef(null)
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault()
@@ -157,18 +154,6 @@ export default function FileUpload() {
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId))
   }
 
-  const togglePlayback = (fileId, file) => {
-    if (isPlaying === fileId) {
-      audioRef.current?.pause()
-      setIsPlaying(null)
-    } else {
-      if (audioRef.current) {
-        audioRef.current.src = URL.createObjectURL(file)
-        audioRef.current.play()
-        setIsPlaying(fileId)
-      }
-    }
-  }
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -181,12 +166,12 @@ export default function FileUpload() {
     }
   }
 
-  const getStatusText = (status, progress) => {
+  const getStatusText = (status) => {
     switch (status) {
       case "uploading":
-        return `Uploading... ${Math.round(progress)}%`;
+        return "Uploading audio file...";
       case "processing":
-        return `Processing... ${Math.round(progress)}%`;
+        return "Transcribing with AI...";
       case "completed":
         return "Transcription completed"
       case "error":
@@ -264,27 +249,18 @@ export default function FileUpload() {
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    {uploadedFile.status === "completed" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => togglePlayback(uploadedFile.id, uploadedFile.file)}>
-                        {isPlaying === uploadedFile.id ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-                      </Button>
-                    )}
-
                     <Button variant="ghost" size="sm" onClick={() => removeFile(uploadedFile.id)}>
                       <X className="h-3 w-3" />
                     </Button>
                   </div>
                 </div>
 
-                {/* Progress Bar */}
-                {uploadedFile.status !== "completed" && (
-                  <div className="space-y-2">
-                    <Progress value={uploadedFile.progress} className="h-2" />
+                {/* Loading Indicator */}
+                {uploadedFile.status !== "completed" && uploadedFile.status !== "error" && (
+                  <div className="flex items-center space-x-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
                     <p className="text-sm text-muted-foreground">
-                      {getStatusText(uploadedFile.status, uploadedFile.progress)}
+                      {getStatusText(uploadedFile.status)}
                     </p>
                   </div>
                 )}
@@ -329,8 +305,6 @@ export default function FileUpload() {
           ))}
         </div>
       )}
-      {/* Hidden audio element for playback */}
-      <audio ref={audioRef} onEnded={() => setIsPlaying(null)} className="hidden" />
     </div>
   );
 }
