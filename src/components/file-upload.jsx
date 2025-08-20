@@ -47,59 +47,82 @@ export default function FileUpload() {
 
   const processFileWithAPI = async (fileId, file) => {
     try {
-      // Update status to uploading
+      // Step 1: Get presigned upload URL
       setUploadedFiles((prev) =>
-        prev.map((f) => f.id === fileId ? { ...f, status: "uploading", progress: 10 } : f)
+        prev.map((f) => f.id === fileId ? { ...f, status: "preparing", progress: 5 } : f)
       )
 
-      const formData = new FormData()
-      formData.append('audio', file)
-
-      // Update to processing
-      setUploadedFiles((prev) =>
-        prev.map((f) => f.id === fileId ? { ...f, status: "processing", progress: 50 } : f)
-      )
-
-      const response = await fetch('/api/transcribe', {
+      const uploadResponse = await fetch('/api/uploads', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          contentType: file.type || 'audio/m4a'
+        }),
       })
 
-      const result = await response.json()
+      const uploadData = await uploadResponse.json()
 
-      if (response.ok) {
-        // Success
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.id === fileId
-              ? {
-                  ...f,
-                  status: "completed",
-                  progress: 100,
-                  transcription: result.transcription,
-                  requestId: result.requestId,
-                  timestamp: result.timestamp,
-                }
-              : f
-          )
-        )
-      } else {
-        // Error from API
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.id === fileId
-              ? {
-                  ...f,
-                  status: "error",
-                  progress: 0,
-                  error: result.error || 'Failed to process audio file',
-                }
-              : f
-          )
-        )
+      if (!uploadResponse.ok) {
+        throw new Error(uploadData.error || 'Failed to get upload URL')
       }
+
+      // Step 2: Upload directly to R2
+      setUploadedFiles((prev) =>
+        prev.map((f) => f.id === fileId ? { ...f, status: "uploading", progress: 20 } : f)
+      )
+
+      const r2Response = await fetch(uploadData.uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type || 'audio/m4a'
+        },
+      })
+
+      if (!r2Response.ok) {
+        throw new Error('Failed to upload file to storage')
+      }
+
+      // Step 3: Create transcription job
+      setUploadedFiles((prev) =>
+        prev.map((f) => f.id === fileId ? { ...f, status: "creating_job", progress: 40 } : f)
+      )
+
+      const jobResponse = await fetch('/api/jobs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          objectKey: uploadData.objectKey,
+          fileName: file.name,
+          source: 'web'
+        }),
+      })
+
+      const jobData = await jobResponse.json()
+
+      if (!jobResponse.ok) {
+        throw new Error(jobData.error || 'Failed to create transcription job')
+      }
+
+      // Step 4: Poll for job completion
+      setUploadedFiles((prev) =>
+        prev.map((f) => f.id === fileId ? { 
+          ...f, 
+          status: "processing", 
+          progress: 50, 
+          jobId: jobData.jobId 
+        } : f)
+      )
+
+      // Start polling for job status
+      pollJobStatus(fileId, jobData.jobId)
+
     } catch (error) {
-      // Network or other error
       console.error('Upload error:', error)
       setUploadedFiles((prev) =>
         prev.map((f) =>
@@ -108,12 +131,115 @@ export default function FileUpload() {
                 ...f,
                 status: "error",
                 progress: 0,
-                error: 'Network error. Please try again.',
+                error: error.message || 'Network error. Please try again.',
               }
             : f
         )
       )
     }
+  }
+
+  const pollJobStatus = async (fileId, jobId) => {
+    const MAX_POLLING_TIME = 10 * 60 * 1000 // 10 minutes timeout
+    const POLL_INTERVAL = 2000 // 2 seconds
+    let pollCount = 0
+    const maxPollCount = MAX_POLLING_TIME / POLL_INTERVAL
+
+    const poll = async () => {
+      pollCount++
+      
+      // Check if we've exceeded the maximum polling time
+      if (pollCount >= maxPollCount) {
+        console.warn(`Polling timeout for job ${jobId} after ${MAX_POLLING_TIME / 1000} seconds`)
+        setUploadedFiles((prev) =>
+          prev.map((f) =>
+            f.id === fileId
+              ? {
+                  ...f,
+                  status: "error",
+                  progress: 0,
+                  error: "Transcription timed out after 10 minutes. Please try again.",
+                }
+              : f
+          )
+        )
+        return // Stop polling
+      }
+      
+      try {
+        const response = await fetch(`/api/jobs/${jobId}`)
+        const jobStatus = await response.json()
+
+        if (!response.ok) {
+          throw new Error(jobStatus.error || 'Failed to get job status')
+        }
+
+        // Update progress
+        setUploadedFiles((prev) =>
+          prev.map((f) =>
+            f.id === fileId
+              ? {
+                  ...f,
+                  progress: jobStatus.progress || 50,
+                }
+              : f
+          )
+        )
+
+        if (jobStatus.status === 'completed') {
+          // Download transcript
+          const transcriptResponse = await fetch(`/api/transcripts/${jobId}`)
+          const transcriptText = await transcriptResponse.text()
+
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileId
+                ? {
+                    ...f,
+                    status: "completed",
+                    progress: 100,
+                    transcription: transcriptText,
+                    jobId: jobId,
+                  }
+                : f
+            )
+          )
+        } else if (jobStatus.status === 'error') {
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileId
+                ? {
+                    ...f,
+                    status: "error",
+                    progress: 0,
+                    error: jobStatus.error?.message || 'Transcription failed',
+                  }
+                : f
+            )
+          )
+        } else {
+          // Continue polling if still processing
+          setTimeout(poll, POLL_INTERVAL)
+        }
+      } catch (error) {
+        console.error('Polling error:', error)
+        setUploadedFiles((prev) =>
+          prev.map((f) =>
+            f.id === fileId
+              ? {
+                  ...f,
+                  status: "error",
+                  progress: 0,
+                  error: 'Failed to get transcription status',
+                }
+              : f
+          )
+        )
+      }
+    }
+
+    // Start polling
+    setTimeout(poll, 1000)
   }
 
   const processFiles = (files) => {
@@ -168,8 +294,12 @@ export default function FileUpload() {
 
   const getStatusText = (status) => {
     switch (status) {
+      case "preparing":
+        return "Getting upload URL...";
       case "uploading":
-        return "Uploading audio file...";
+        return "Uploading to cloud storage...";
+      case "creating_job":
+        return "Creating transcription job...";
       case "processing":
         return "Transcribing with AI...";
       case "completed":
