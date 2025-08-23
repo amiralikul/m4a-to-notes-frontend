@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Upload, FileAudio, Type, Download, Clock, Shield, Zap, CheckCircle } from "lucide-react"
+import { Upload, FileAudio, Type, Download, Clock, Shield, Zap, CheckCircle, Star } from "lucide-react"
 import Link from "next/link"
 import FileUpload from "@/components/file-upload"
+import { PaddleCheckout } from "@/components/paddle-checkout"
+import { PRICING_PLANS } from "@/lib/pricing"
 
 export default function HomePage() {
   return (
@@ -81,13 +83,17 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Button size="lg" className="h-12 px-8">
-                  <Upload className="mr-2 h-4 w-4" />
-                  Start Converting
-                </Button>
-                <Button variant="outline" size="lg" className="h-12 px-8 bg-transparent">
-                  Try Demo
-                </Button>
+                <a href="#pricing">
+                  <Button size="lg" className="h-12 px-8">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Start Converting
+                  </Button>
+                </a>
+                <Link href="/demo">
+                  <Button variant="outline" size="lg" className="h-12 px-8 bg-transparent">
+                    Try Demo
+                  </Button>
+                </Link>
               </div>
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                 <div className="flex items-center">
@@ -250,6 +256,168 @@ export default function HomePage() {
                     </CardContent>
                   </Card>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing Section */}
+        <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Simple Pricing</h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Choose the plan that fits your transcription needs. Start with our free tier or upgrade for unlimited access.
+                </p>
+              </div>
+            </div>
+            
+            <div className="mx-auto grid max-w-5xl items-start gap-6 py-12 lg:grid-cols-3 lg:gap-8">
+              {/* Free Plan */}
+              <Card className="relative">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl">Free</CardTitle>
+                  <div className="text-4xl font-bold">$0</div>
+                  <CardDescription>Perfect for trying out our service</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      30 minutes of transcription
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Basic accuracy
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Standard processing speed
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Export to TXT
+                    </li>
+                  </ul>
+                  <Button className="w-full" variant="outline">
+                    Get Started Free
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Pro Plan */}
+              <Card className="relative border-primary">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-primary text-primary-foreground">
+                    <Star className="mr-1 h-3 w-3" />
+                    Most Popular
+                  </Badge>
+                </div>
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl">Pro</CardTitle>
+                  <div className="text-4xl font-bold">$19<span className="text-lg font-normal">/month</span></div>
+                  <CardDescription>For professionals and small teams</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      10 hours of transcription/month
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      High accuracy (95%+)
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Priority processing
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Export to TXT, DOCX, PDF
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Speaker identification
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Timestamps
+                    </li>
+                  </ul>
+                  <PaddleCheckout 
+                    priceId={PRICING_PLANS.PRO.priceId} 
+                    quantity={1}
+                    className="w-full"
+                  >
+                    Start Pro Plan
+                  </PaddleCheckout>
+                </CardContent>
+              </Card>
+
+              {/* Business Plan */}
+              <Card className="relative">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl">Business</CardTitle>
+                  <div className="text-4xl font-bold">$49<span className="text-lg font-normal">/month</span></div>
+                  <CardDescription>For growing businesses</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      50 hours of transcription/month
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Highest accuracy (98%+)
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Fastest processing
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      All export formats
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Advanced speaker identification
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Custom vocabulary
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      API access
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                      Priority support
+                    </li>
+                  </ul>
+                  <PaddleCheckout 
+                    priceId={PRICING_PLANS.BUSINESS.priceId} 
+                    quantity={1}
+                    className="w-full"
+                  >
+                    Start Business Plan
+                  </PaddleCheckout>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Additional Info */}
+            <div className="text-center space-y-4">
+              <p className="text-sm text-muted-foreground">
+                All plans include secure file handling and automatic deletion after 24 hours
+              </p>
+              <div className="flex justify-center space-x-4 text-xs text-muted-foreground">
+                <span>✓ No setup fees</span>
+                <span>✓ Cancel anytime</span>
+                <span>✓ 30-day money-back guarantee</span>
               </div>
             </div>
           </div>
