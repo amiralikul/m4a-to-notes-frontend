@@ -1,16 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { usePaddle } from './paddle-provider';
 import { Button } from './ui/button';
 
 export function PaddleCheckout({ 
   priceId, 
   quantity = 1, 
-  customerEmail,
+  customerEmail, // Optional override - will use Clerk user email if not provided
   className = "",
   children = "Buy Now"
 }) {
+  const { user, isLoaded: isUserLoaded } = useUser();
   const { paddle, isLoading, error } = usePaddle();
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
@@ -22,6 +24,11 @@ export function PaddleCheckout({
 
     if (!priceId) {
       console.error('Price ID is required');
+      return;
+    }
+
+    if (!isUserLoaded || !user) {
+      console.error('User must be logged in to purchase');
       return;
     }
 
@@ -37,15 +44,28 @@ export function PaddleCheckout({
         }
       };
 
-      // Add customer email if provided
-      if (customerEmail) {
-        checkoutOptions.customer = { email: customerEmail };
+      // Add customer info from Clerk user
+      const userEmail = customerEmail || user.primaryEmailAddress?.emailAddress;
+      if (userEmail) {
+        checkoutOptions.customer = { email: userEmail };
       }
+
+      // Add custom data with Clerk user ID for webhook processing
+      checkoutOptions.customData = {
+        clerkUserId: user.id
+      };
 
       // Add return URL for successful checkout
       if (typeof window !== 'undefined') {
         checkoutOptions.settings.successUrl = `${window.location.origin}/checkout/success`;
       }
+
+      console.log('Opening checkout with options:', {
+        priceId,
+        quantity,
+        userEmail,
+        clerkUserId: user.id
+      });
 
       await paddle.Checkout.open(checkoutOptions);
     } catch (err) {
@@ -67,6 +87,22 @@ export function PaddleCheckout({
     return (
       <Button disabled className={className} title="Price ID not configured - see Paddle dashboard setup">
         Setup Required
+      </Button>
+    );
+  }
+
+  if (!isUserLoaded) {
+    return (
+      <Button disabled className={className}>
+        Loading...
+      </Button>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Button disabled className={className} title="Please sign in to purchase">
+        Sign In Required
       </Button>
     );
   }

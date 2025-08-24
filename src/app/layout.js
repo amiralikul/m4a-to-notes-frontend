@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton} from "@clerk/nextjs";
 import { PaddleProvider } from "../components/paddle-provider";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,18 +26,36 @@ export default function RootLayout({ children }) {
           <html lang="en">
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <PaddleProvider>
-              <header className="flex justify-end items-center p-4 gap-4 h-16">
-                  <SignedOut>
-                      <SignInButton mode={'modal'} />
-                      <SignUpButton mode={'modal'} >
-                          <button className="bg-[#6c47ff] text-ceramic-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                              Sign Up
-                          </button>
-                      </SignUpButton>
-                  </SignedOut>
-                  <SignedIn>
-                      <UserButton />
-                  </SignedIn>
+              <header className="flex justify-between items-center p-4 h-16 border-b">
+                  <div className="flex items-center gap-8">
+                      <Link href="/" className="text-xl font-bold">
+                          AudioScribe
+                      </Link>
+                      <SignedIn>
+                          <nav className="flex items-center gap-4">
+                              <Link href="/subscription" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                                  Subscription
+                              </Link>
+                              <Link href="/test-integration" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                                  Test
+                              </Link>
+                          </nav>
+                      </SignedIn>
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                      <SignedOut>
+                          <SignInButton mode={'modal'} />
+                          <SignUpButton mode={'modal'} >
+                              <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+                                  Sign Up
+                              </button>
+                          </SignUpButton>
+                      </SignedOut>
+                      <SignedIn>
+                          <UserButton />
+                      </SignedIn>
+                  </div>
               </header>
               {children}
           </PaddleProvider>
