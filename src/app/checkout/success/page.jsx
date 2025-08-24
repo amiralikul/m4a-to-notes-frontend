@@ -51,7 +51,7 @@ export default function CheckoutSuccessPage() {
               Start Transcribing
             </Button>
           </Link>
-          <Link href="/account">
+          <Link href="/subscription">
             <Button variant="outline" size="lg">
               Manage Subscription
             </Button>

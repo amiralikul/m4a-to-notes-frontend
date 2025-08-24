@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { useEntitlements } from '@/hooks/use-entitlements';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,41 +24,8 @@ import {
 
 export default function SubscriptionPage() {
   const { user, isLoaded } = useUser();
-  const [entitlements, setEntitlements] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { entitlements, loading, error, refetch: fetchEntitlements, canUpgradeTo, hasActiveSubscription } = useEntitlements();
   const [cancellationSuccess, setCancellationSuccess] = useState(null);
-
-  const fetchEntitlements = async () => {
-    if (!user) return;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch('/api/me/entitlements', {
-        cache: 'no-store'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to load subscription: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      setEntitlements(data.entitlements);
-    } catch (err) {
-      setError(err.message);
-      console.error('Failed to fetch entitlements:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isLoaded && user) {
-      fetchEntitlements();
-    }
-  }, [isLoaded, user]);
 
   const getPlanDetails = (planKey) => {
     const plan = PRICING_PLANS[planKey?.toUpperCase()];
@@ -96,12 +64,8 @@ export default function SubscriptionPage() {
   const getAvailableUpgrades = (currentPlan) => {
     const plans = Object.entries(PRICING_PLANS).map(([key, plan]) => ({ key: key.toLowerCase(), ...plan }));
     
-    if (currentPlan === 'free') {
-      return plans.filter(p => p.priceId && (p.key === 'pro' || p.key === 'business'));
-    } else if (currentPlan === 'pro') {
-      return plans.filter(p => p.priceId && p.key === 'business');
-    }
-    return [];
+    // Only show plans that user can actually upgrade to
+    return plans.filter(p => p.priceId && canUpgradeTo(p.key));
   };
 
   const handleCancellationSuccess = async (method) => {
@@ -345,6 +309,7 @@ export default function SubscriptionPage() {
 
                     <PaddleCheckout
                       priceId={plan.priceId}
+                      planKey={plan.key}
                       className="w-full"
                     >
                       <div className="flex items-center justify-center gap-2">

@@ -3,18 +3,39 @@
 import { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { usePaddle } from './paddle-provider';
+import { useEntitlements } from '../hooks/use-entitlements';
 import { Button } from './ui/button';
+import { PRICING_PLANS } from '../lib/pricing';
+import Link from 'next/link';
+import { Crown, CheckCircle } from 'lucide-react';
 
 export function PaddleCheckout({ 
   priceId, 
   quantity = 1, 
   customerEmail, // Optional override - will use Clerk user email if not provided
   className = "",
-  children = "Buy Now"
+  children = "Buy Now",
+  planKey = null // Optional plan key to determine target plan
 }) {
   const { user, isLoaded: isUserLoaded } = useUser();
   const { paddle, isLoading, error } = usePaddle();
+  const { entitlements, loading: entitlementsLoading, canPurchase, getSubscriptionMessage, hasActiveSubscription } = useEntitlements();
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+
+  // Determine target plan from priceId if planKey not provided
+  const getTargetPlan = () => {
+    if (planKey) return planKey;
+    
+    // Map priceId to plan
+    for (const [key, plan] of Object.entries(PRICING_PLANS)) {
+      if (plan.priceId === priceId) {
+        return key.toLowerCase();
+      }
+    }
+    return 'unknown';
+  };
+
+  const targetPlan = getTargetPlan();
 
   const openCheckout = async () => {
     if (!paddle) {
@@ -30,6 +51,33 @@ export function PaddleCheckout({
     if (!isUserLoaded || !user) {
       console.error('User must be logged in to purchase');
       return;
+    }
+
+    // Pre-purchase validation with backend
+    try {
+      const validationResponse = await fetch('/api/validate-purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId,
+          planKey: targetPlan
+        })
+      });
+
+      const validation = await validationResponse.json();
+      
+      if (!validation.valid) {
+        console.error('Purchase validation failed:', validation.message);
+        alert(`Purchase not allowed: ${validation.message}`);
+        return;
+      }
+
+      console.log('Purchase validation passed:', validation.message);
+    } catch (validationError) {
+      console.error('Failed to validate purchase:', validationError);
+      // Continue with purchase if validation fails (graceful degradation)
     }
 
     setIsCheckoutLoading(true);
@@ -91,7 +139,7 @@ export function PaddleCheckout({
     );
   }
 
-  if (!isUserLoaded) {
+  if (!isUserLoaded || entitlementsLoading) {
     return (
       <Button disabled className={className}>
         Loading...
@@ -107,6 +155,57 @@ export function PaddleCheckout({
     );
   }
 
+  // Check subscription status and show appropriate state
+  const subscriptionMessage = getSubscriptionMessage(targetPlan);
+  
+  if (subscriptionMessage) {
+    switch (subscriptionMessage.type) {
+      case 'current':
+        return (
+          <Button 
+            disabled 
+            className={`${className} bg-green-100 text-green-800 hover:bg-green-100 border-green-200`}
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Current Plan
+          </Button>
+        );
+      
+      case 'downgrade':
+        return (
+          <div className="space-y-2">
+            <Button 
+              disabled 
+              className={`${className} bg-gray-100 text-gray-600 hover:bg-gray-100`}
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Already on Higher Plan
+            </Button>
+            <p className="text-xs text-gray-500 text-center">
+              {subscriptionMessage.message}
+            </p>
+          </div>
+        );
+      
+      case 'upgrade':
+        return (
+          <div className="space-y-2">
+            <Button 
+              onClick={openCheckout} 
+              disabled={isLoading || isCheckoutLoading || !paddle}
+              className={className}
+            >
+              {isLoading || isCheckoutLoading ? 'Loading...' : `Upgrade to ${targetPlan.charAt(0).toUpperCase() + targetPlan.slice(1)}`}
+            </Button>
+            <p className="text-xs text-blue-600 text-center">
+              {subscriptionMessage.message}
+            </p>
+          </div>
+        );
+    }
+  }
+
+  // Default case - user can purchase
   return (
     <Button 
       onClick={openCheckout} 
