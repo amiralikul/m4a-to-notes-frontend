@@ -4,7 +4,7 @@ import FileUpload from '@/components/file-upload';
 import { ProFeature, ProOnly, BusinessOnly } from '@/components/pro-feature';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useEntitlements } from '@/hooks/useEntitlements';
+import { useEntitlements } from '@/hooks/use-entitlements';
 import { Badge } from '@/components/ui/badge';
 import { Clock, FileText, Zap, Crown, Sparkles, ArrowLeft } from 'lucide-react';
 import Link from "next/link";

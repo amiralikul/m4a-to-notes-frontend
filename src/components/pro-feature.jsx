@@ -1,6 +1,6 @@
 'use client';
 
-import { useEntitlements } from '@/hooks/useEntitlements';
+import { useEntitlements } from '@/hooks/use-entitlements';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PaddleCheckout } from '@/components/paddle-checkout';

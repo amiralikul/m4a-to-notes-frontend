@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { PRICING_PLANS } from '@/lib/pricing';
+import { API_CONFIG } from '@/lib/config';
 
 export async function POST(request) {
   try {
@@ -25,8 +26,7 @@ export async function POST(request) {
     }
 
     // Get user's current entitlements
-    const internalSecret = process.env.INTERNAL_API_SECRET;
-    if (!internalSecret) {
+    if (!API_CONFIG.INTERNAL_SECRET) {
       console.error('Missing INTERNAL_API_SECRET environment variable');
       return NextResponse.json(
         { error: 'Configuration error' },
@@ -37,12 +37,9 @@ export async function POST(request) {
     console.log('Validating purchase for user:', userId, 'priceId:', priceId, 'planKey:', planKey);
 
     // Fetch current entitlements from backend
-    const entitlementsResponse = await fetch(`http://localhost:3000/api/entitlements/${userId}`, {
+    const entitlementsResponse = await fetch(API_CONFIG.getWorkerUrl(`/entitlements/${userId}`), {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Internal-Secret': internalSecret
-      }
+      headers: API_CONFIG.getInternalHeaders()
     });
 
     let currentEntitlements = {

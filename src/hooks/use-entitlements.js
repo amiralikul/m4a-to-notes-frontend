@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
 
 export function useEntitlements() {
@@ -9,7 +9,7 @@ export function useEntitlements() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchEntitlements = async () => {
+  const fetchEntitlements = useCallback(async () => {
     if (!user || !isLoaded) {
       setLoading(false);
       return;
@@ -44,11 +44,11 @@ export function useEntitlements() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, isLoaded]);
 
   useEffect(() => {
     fetchEntitlements();
-  }, [isLoaded, user?.id]);
+  }, [isLoaded, user?.id, fetchEntitlements]);
 
   // Helper functions
   const hasActiveSubscription = () => {
@@ -103,6 +103,33 @@ export function useEntitlements() {
     return null;
   };
 
+  // Additional helper methods for compatibility
+  const hasAccess = (feature = 'basic') => {
+    if (!entitlements) return false;
+    
+    const hasActive = hasActiveSubscription();
+    
+    switch (feature) {
+      case 'basic':
+        return true; // Everyone has basic access
+      case 'pro':
+        return (entitlements.plan === 'pro' && hasActive) ||
+               (entitlements.plan === 'business' && hasActive);
+      case 'business':
+        return entitlements.plan === 'business' && hasActive;
+      default:
+        return false;
+    }
+  };
+
+  const isPlan = (plan) => {
+    return entitlements?.plan === plan;
+  };
+
+  const isActive = () => {
+    return hasActiveSubscription();
+  };
+
   return {
     entitlements,
     loading,
@@ -113,6 +140,10 @@ export function useEntitlements() {
     getCurrentPlan,
     canUpgradeTo,
     canPurchase,
-    getSubscriptionMessage
+    getSubscriptionMessage,
+    // Additional compatibility methods
+    hasAccess,
+    isPlan,
+    isActive
   };
 }

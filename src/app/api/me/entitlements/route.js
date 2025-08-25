@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import { API_CONFIG } from '@/lib/config';
 
 export async function GET(request) {
   try {
@@ -13,10 +14,7 @@ export async function GET(request) {
       );
     }
 
-    // Get internal API secret
-    const internalSecret = process.env.INTERNAL_API_SECRET;
-
-    if (!internalSecret) {
+    if (!API_CONFIG.INTERNAL_SECRET) {
       console.error('Missing INTERNAL_API_SECRET environment variable');
       return NextResponse.json(
         { error: 'Configuration error' },
@@ -26,13 +24,10 @@ export async function GET(request) {
 
     console.log('Fetching entitlements for user:', userId);
 
-    // Fetch entitlements directly from Worker via Next.js proxy
-    const response = await fetch(`http://localhost:3000/api/entitlements/${userId}`, {
+    // Fetch entitlements directly from Worker API
+    const response = await fetch(API_CONFIG.getWorkerUrl(`/entitlements/${userId}`), {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Internal-Secret': internalSecret
-      }
+      headers: API_CONFIG.getInternalHeaders()
     });
 
     if (!response.ok) {
