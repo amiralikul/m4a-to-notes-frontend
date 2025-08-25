@@ -17,6 +17,14 @@ const nextConfig = {
         destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/uploads' : 'http://localhost:8787/api/uploads',
       },
       {
+        source: '/api/jobs',
+        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/jobs' : 'http://localhost:8787/api/jobs',
+      },
+      {
+        source: '/api/jobs/',
+        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/jobs' : 'http://localhost:8787/api/jobs',
+      },
+      {
         source: '/api/jobs/:path*',
         destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/jobs/:path*' : 'http://localhost:8787/api/jobs/:path*',
       },
