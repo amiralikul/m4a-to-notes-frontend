@@ -20,7 +20,7 @@ export default function FileUpload() {
     setIsDragOver(false)
   }, [])
 
-  const validateFile = file => {
+  const validateFile = useCallback((file) => {
     const validTypes = ["audio/m4a", "audio/mp4", "audio/x-m4a"]
     const maxSize = 25 * 1024 * 1024 // 25MB (Whisper API limit)
     if (!validTypes.includes(file.type) && !file.name.toLowerCase().endsWith(".m4a")) {
@@ -34,7 +34,7 @@ export default function FileUpload() {
     }
 
     return true
-  }
+  }, [])
 
   const formatFileSize = bytes => {
     if (bytes === 0) return "0 Bytes"
@@ -44,7 +44,7 @@ export default function FileUpload() {
     return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
 
-  const processFileWithAPI = async (fileId, file) => {
+  const processFileWithAPI = useCallback(async (fileId, file) => {
     try {
       // Step 1: Get presigned upload URL
       setUploadedFiles((prev) =>
@@ -136,7 +136,7 @@ export default function FileUpload() {
         )
       )
     }
-  }
+  }, [])
 
   const pollJobStatus = async (fileId, jobId) => {
     const MAX_POLLING_TIME = 10 * 60 * 1000 // 10 minutes timeout
@@ -241,7 +241,7 @@ export default function FileUpload() {
     setTimeout(poll, 1000)
   }
 
-  const processFiles = (files) => {
+  const processFiles = useCallback((files) => {
     const fileArray = Array.from(files)
 
     fileArray.forEach((file) => {
@@ -258,7 +258,7 @@ export default function FileUpload() {
         processFileWithAPI(fileId, file)
       }
     })
-  }
+  }, [validateFile, processFileWithAPI])
 
   const handleDrop = useCallback((e) => {
     e.preventDefault()
@@ -266,7 +266,7 @@ export default function FileUpload() {
 
     const files = e.dataTransfer.files
     processFiles(files)
-  }, [])
+  }, [processFiles])
 
   const handleFileSelect = (e) => {
     const files = e.target.files

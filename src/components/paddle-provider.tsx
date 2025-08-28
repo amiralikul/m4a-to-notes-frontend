@@ -21,7 +21,7 @@ export function PaddleProvider({ children }) {
     }
 
     initializePaddle({ 
-      environment, 
+      environment: environment as any, 
       token 
     }).then(
       (paddleInstance) => {

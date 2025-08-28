@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,7 @@ export default function TestIntegrationPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchEntitlements = async () => {
+  const fetchEntitlements = useCallback(async () => {
     if (!user) return;
     
     setLoading(true);
@@ -37,13 +37,13 @@ export default function TestIntegrationPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     if (isLoaded && user) {
       fetchEntitlements();
     }
-  }, [isLoaded, user]);
+  }, [isLoaded, user, fetchEntitlements]);
 
   const getPlanColor = (plan) => {
     switch (plan) {
@@ -237,12 +237,12 @@ export default function TestIntegrationPage() {
         </CardHeader>
         <CardContent className="text-sm space-y-2">
           <ol className="list-decimal list-inside space-y-1">
-            <li>Verify your entitlements show "free" plan initially</li>
-            <li>Click "Test Purchase Pro Plan" to open Paddle checkout</li>
+            <li>Verify your entitlements show &quot;free&quot; plan initially</li>
+            <li>Click &quot;Test Purchase Pro Plan&quot; to open Paddle checkout</li>
             <li>Complete purchase with test card details above</li>
-            <li>Return to this page and click "Refresh" to see updated entitlements</li>
+            <li>Return to this page and click &quot;Refresh&quot; to see updated entitlements</li>
             <li>Check browser DevTools console for detailed logs</li>
-            <li>Verify entitlements now show "pro" plan with "active" status</li>
+            <li>Verify entitlements now show &quot;pro&quot; plan with &quot;active&quot; status</li>
           </ol>
         </CardContent>
       </Card>

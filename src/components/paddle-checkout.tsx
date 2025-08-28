@@ -12,9 +12,9 @@ import { Crown, CheckCircle } from 'lucide-react';
 export function PaddleCheckout({ 
   priceId, 
   quantity = 1, 
-  customerEmail, // Optional override - will use Clerk user email if not provided
+  customerEmail = null, // Optional override - will use Clerk user email if not provided
   className = "",
-  children = "Buy Now",
+  children,
   planKey = null // Optional plan key to determine target plan
 }) {
   const { user, isLoaded: isUserLoaded } = useUser();
@@ -83,7 +83,7 @@ export function PaddleCheckout({
     setIsCheckoutLoading(true);
 
     try {
-      const checkoutOptions = {
+      const checkoutOptions: any = {
         items: [{ priceId, quantity }],
         settings: {
           displayMode: 'overlay',
@@ -212,7 +212,7 @@ export function PaddleCheckout({
       disabled={isLoading || isCheckoutLoading || !paddle}
       className={className}
     >
-      {isLoading || isCheckoutLoading ? 'Loading...' : children}
+      {isLoading || isCheckoutLoading ? 'Loading...' : (children || 'Buy Now')}
     </Button>
   );
 }
@@ -250,9 +250,9 @@ export function ExampleCheckout() {
         <ol className="list-decimal ml-4 space-y-1">
           <li>Go to your Paddle sandbox dashboard</li>
           <li>Navigate to Catalog → Products</li>
-          <li>Create a new product (e.g., "Pro Plan")</li>
+          <li>Create a new product (e.g., &quot;Pro Plan&quot;)</li>
           <li>Add a price to the product (e.g., $19/month)</li>
-          <li>Copy the price ID (starts with "pri_")</li>
+          <li>Copy the price ID (starts with &quot;pri_&quot;)</li>
           <li>Update /src/lib/pricing.js with the real price ID</li>
           <li>Test with card: 4242 4242 4242 4242, any future date, CVC: 100</li>
         </ol>

@@ -31,6 +31,12 @@ export function CancelSubscription({
   className = "",
   variant = "outline",
   size = "default"
+}: {
+  entitlements?: any;
+  onCancellationSuccess?: (method: string) => void;
+  className?: string;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  size?: "default" | "sm" | "lg" | "icon";
 }) {
   const { user } = useUser();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -151,7 +157,7 @@ export function CancelSubscription({
             Cancel Subscription
           </DialogTitle>
           <DialogDescription>
-            Choose how you'd like to cancel your subscription. Your access will continue until the end of your billing period.
+            Choose how you&apos;d like to cancel your subscription. Your access will continue until the end of your billing period.
           </DialogDescription>
         </DialogHeader>
 
@@ -210,7 +216,7 @@ export function CancelSubscription({
                       <Badge className="bg-green-100 text-green-800 text-xs">Recommended</Badge>
                     </div>
                     <p className="text-sm text-gray-600">
-                      Manage your subscription through Paddle's secure portal. You can also update payment methods and download invoices.
+                      Manage your subscription through Paddle&apos;s secure portal. You can also update payment methods and download invoices.
                     </p>
                   </div>
                   <ExternalLink className="w-4 h-4 text-gray-400 mt-1" />
@@ -238,7 +244,7 @@ export function CancelSubscription({
                   <div className="flex-1">
                     <div className="font-medium mb-1">Quick Cancel</div>
                     <p className="text-sm text-gray-600">
-                      Cancel immediately without leaving the app. Optional: tell us why you're canceling.
+                      Cancel immediately without leaving the app. Optional: tell us why you&apos;re canceling.
                     </p>
                   </div>
                 </div>

@@ -265,7 +265,7 @@ export default function SubscriptionPage() {
                   <p>Usage tracking coming soon</p>
                 </div>
                 <p className="text-sm text-gray-400">
-                  We're working on detailed usage analytics for your transcription minutes
+                  We&apos;re working on detailed usage analytics for your transcription minutes
                 </p>
               </div>
             </CardContent>
