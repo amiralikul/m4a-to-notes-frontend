@@ -50,8 +50,18 @@ const nextConfig = {
         source: '/api/paddle/:path*',
         destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/paddle/:path*' : 'http://localhost:8787/api/paddle/:path*',
       },
+      {
+        source: '/ingest/static/:path*',
+        destination: 'https://eu-assets.i.posthog.com/static/:path*',
+      },
+      {
+        source: '/ingest/:path*',
+        destination: 'https://eu.i.posthog.com/:path*',
+      },
     ];
   },
+  // This is required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
 };
 
 export default nextConfig;
