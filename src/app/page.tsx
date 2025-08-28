@@ -83,7 +83,7 @@ export default function HomePage() {
               </div>
               <div className="space-x-4">
                 <a href="#pricing">
-                  <Button size="lg" className="h-12 px-8">
+                  <Button size="lg" className="h-12 px-8" variant="default">
                     <Upload className="mr-2 h-4 w-4" />
                     Start Converting
                   </Button>
