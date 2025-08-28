@@ -23,12 +23,11 @@ export default function FileUpload() {
   const validateFile = file => {
     const validTypes = ["audio/m4a", "audio/mp4", "audio/x-m4a"]
     const maxSize = 25 * 1024 * 1024 // 25MB (Whisper API limit)
-
     if (!validTypes.includes(file.type) && !file.name.toLowerCase().endsWith(".m4a")) {
       alert("Please upload only M4A audio files.")
       return false
     }
-
+    
     if (file.size > maxSize) {
       alert("File size must be less than 25MB (OpenAI Whisper API limit).")
       return false
@@ -274,6 +273,8 @@ export default function FileUpload() {
     if (files) {
       processFiles(files)
     }
+    // Clear the input value to allow selecting the same file again
+    e.target.value = ''
   }
 
   const removeFile = (fileId) => {
