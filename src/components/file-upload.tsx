@@ -3,7 +3,7 @@ import { useState, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Upload, FileAudio, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
+import { Upload, FileAudio, X, CheckCircle, AlertCircle, Loader2, Download } from "lucide-react"
 
 export default function FileUpload() {
   const [isDragOver, setIsDragOver] = useState(false)
@@ -313,41 +313,60 @@ export default function FileUpload() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
+    <div className="w-full max-w-5xl mx-auto space-y-8">
       {/* Upload Area */}
       <Card
-        className={`border-2 border-dashed transition-all duration-200 ${
-          isDragOver ? "border-primary bg-primary/5 scale-105" : "border-muted-foreground/25 hover:border-primary/50"
+        className={`border-2 border-dashed transition-all duration-300 relative overflow-hidden rounded-2xl ${
+          isDragOver 
+            ? "border-blue-400 bg-blue-50/50 scale-[1.02] shadow-lg" 
+            : "border-gray-300 hover:border-blue-400 hover:bg-blue-50/30 hover:shadow-md"
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}>
-        <CardContent
-          className="flex flex-col items-center justify-center py-12 px-6 text-center">
-          <div
-            className={`rounded-full p-4 mb-4 transition-colors ${
-              isDragOver ? "bg-primary text-primary-foreground" : "bg-muted"
-            }`}>
-            <Upload className="h-8 w-8" />
+        
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-indigo-50/30 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+        
+        <CardContent className="relative flex flex-col items-center justify-center py-16 px-8 text-center">
+          <div className={`rounded-2xl p-6 mb-6 transition-all duration-300 ${
+            isDragOver 
+              ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-xl scale-110" 
+              : "bg-gradient-to-br from-gray-100 to-gray-200 hover:from-blue-100 hover:to-indigo-100"
+          }`}>
+            <Upload className={`h-10 w-10 transition-colors ${!isDragOver ? 'text-gray-600' : ''}`} />
           </div>
 
-          <h3 className="text-xl font-semibold mb-2">
+          <h3 className="text-2xl font-bold mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
             {isDragOver ? "Drop your M4A files here" : "Upload M4A Audio Files"}
           </h3>
 
-          <p className="text-muted-foreground mb-6 max-w-sm">
+          <p className="text-gray-600 mb-8 max-w-lg leading-relaxed text-lg">
             Drag and drop your M4A files here, or click to browse and select files from your device.
           </p>
 
-          <Button onClick={() => fileInputRef.current?.click()} size="lg" className="mb-4">
-            <Upload className="mr-2 h-4 w-4" />
+          <Button 
+            onClick={() => fileInputRef.current?.click()} 
+            size="lg" 
+            className="mb-8 h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+          >
+            <Upload className="mr-3 h-5 w-5" />
             Choose Files
           </Button>
 
-          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <Badge variant="secondary">M4A files only</Badge>
-            <Badge variant="secondary">Max 25MB per file</Badge>
-            <Badge variant="secondary">Multiple files supported</Badge>
+          <div className="flex flex-wrap justify-center gap-3 text-sm">
+            <Badge variant="outline" className="bg-white/80 border-blue-200 text-blue-700 px-4 py-2">
+              <FileAudio className="w-3 h-3 mr-2" />
+              M4A files only
+            </Badge>
+            <Badge variant="outline" className="bg-white/80 border-green-200 text-green-700 px-4 py-2">
+              <CheckCircle className="w-3 h-3 mr-2" />
+              Max 25MB per file
+            </Badge>
+            <Badge variant="outline" className="bg-white/80 border-purple-200 text-purple-700 px-4 py-2">
+              <Upload className="w-3 h-3 mr-2" />
+              Multiple files supported
+            </Badge>
           </div>
 
           <input
@@ -361,60 +380,90 @@ export default function FileUpload() {
       </Card>
       {/* Uploaded Files */}
       {uploadedFiles.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Processing Files</h3>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              Processing Files
+            </h3>
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+              {uploadedFiles.length} file{uploadedFiles.length > 1 ? 's' : ''}
+            </Badge>
+          </div>
 
           {uploadedFiles.map((uploadedFile) => (
-            <Card key={uploadedFile.id} className="overflow-hidden">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center space-x-3 flex-1 min-w-0">
-                    {getStatusIcon(uploadedFile.status)}
+            <Card key={uploadedFile.id} className="overflow-hidden shadow-lg border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 rounded-2xl">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-4 flex-1 min-w-0">
+                    <div className="flex-shrink-0">
+                      {getStatusIcon(uploadedFile.status)}
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{uploadedFile.file.name}</p>
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <span>{formatFileSize(uploadedFile.file.size)}</span>
+                      <p className="font-semibold text-lg text-gray-900 truncate">{uploadedFile.file.name}</p>
+                      <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                        <span className="flex items-center">
+                          <FileAudio className="w-3 h-3 mr-1" />
+                          {formatFileSize(uploadedFile.file.size)}
+                        </span>
                         {uploadedFile.duration && <span>Duration: {uploadedFile.duration}</span>}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm" onClick={() => removeFile(uploadedFile.id)}>
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => removeFile(uploadedFile.id)}
+                    className="opacity-60 hover:opacity-100 hover:bg-red-50 hover:text-red-600 transition-all"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
 
-                {/* Loading Indicator */}
+                {/* Progress Bar for Processing Files */}
                 {uploadedFile.status !== "completed" && uploadedFile.status !== "error" && (
-                  <div className="flex items-center space-x-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">
-                      {getStatusText(uploadedFile.status)}
-                    </p>
+                  <div className="space-y-3 mb-4">
+                    <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500 shadow-sm animate-shimmer"
+                        style={{ width: `${uploadedFile.progress || 10}%` }}
+                      ></div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                      <p className="text-sm font-medium text-blue-700">
+                        {getStatusText(uploadedFile.status)}
+                      </p>
+                      <span className="text-sm text-gray-500">
+                        {uploadedFile.progress || 0}%
+                      </span>
+                    </div>
                   </div>
                 )}
 
                 {/* Error Display */}
                 {uploadedFile.status === "error" && uploadedFile.error && (
-                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
                     <div className="flex items-center mb-2">
-                      <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
-                      <p className="font-medium text-sm text-red-700">Error</p>
+                      <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                      <p className="font-semibold text-red-700">Processing Error</p>
                     </div>
-                    <p className="text-sm text-red-600">{uploadedFile.error}</p>
+                    <p className="text-sm text-red-600 leading-relaxed">{uploadedFile.error}</p>
                   </div>
                 )}
 
                 {/* Transcription Preview */}
                 {uploadedFile.transcription && (
-                  <div className="mt-4 p-3 bg-muted rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="font-medium text-sm">Transcription:</p>
+                  <div className="mt-4 p-5 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center">
+                        <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                        <p className="font-semibold text-green-800">Transcription Complete</p>
+                      </div>
                       <Button 
                         variant="outline" 
                         size="sm"
+                        className="bg-white hover:bg-green-50 border-green-300 text-green-700 hover:text-green-800"
                         onClick={() => {
                           const element = document.createElement('a');
                           const file = new Blob([uploadedFile.transcription], {type: 'text/plain'});
@@ -425,10 +474,15 @@ export default function FileUpload() {
                           document.body.removeChild(element);
                         }}
                       >
+                        <Download className="w-4 h-4 mr-2" />
                         Download Full Text
                       </Button>
                     </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{uploadedFile.transcription}</p>
+                    <div className="bg-white/70 p-4 rounded-lg border border-green-200">
+                      <p className="text-sm text-gray-700 leading-relaxed max-h-32 overflow-y-auto">
+                        {uploadedFile.transcription}
+                      </p>
+                    </div>
                   </div>
                 )}
               </CardContent>

@@ -1,256 +1,305 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Upload, FileAudio, Type, Download, Clock, Shield, Zap, CheckCircle } from "lucide-react"
+import { Upload, FileAudio, Type, Download, Clock, Shield, Zap, CheckCircle, Star, Sparkles } from "lucide-react"
 import Link from "next/link"
 import FileUpload from "@/components/file-upload"
 import { PricingSection } from "@/components/pricing-section"
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 bg-grid-slate-100">
       {/* Header */}
-      <header className="px-4 lg:px-6 h-14 flex items-center border-b">
-        <Link className="flex items-center justify-center" href="/">
-          <FileAudio className="h-6 w-6 mr-2" />
-          <span className="font-bold">AudioScribe</span>
+      <header className="px-4 lg:px-6 h-16 flex items-center border-b bg-white/70 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <Link className="flex items-center justify-center group" href="/">
+          <div className="relative">
+            <FileAudio className="h-7 w-7 mr-3 text-blue-600 group-hover:text-blue-700 transition-colors" />
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+          </div>
+          <span className="font-bold text-xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">AudioScribe</span>
         </Link>
-        <nav className="ml-auto flex gap-4  sm:gap-6">
+        <nav className="ml-auto flex gap-6 sm:gap-8">
           <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
+            className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
             href="#features">
             Features
           </Link>
           <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
+            className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
             href="#pricing">
             Pricing
           </Link>
           <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
+            className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
             href="#about">
             About
           </Link>
           <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
+            className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
             href="#contact">
             Contact
           </Link>
         </nav>
       </header>
       <main className="flex-1">
-        {/* Interactive Upload Section */}
-        <section className="w-full py-12 md:py-24 lg:py-24 bg-muted">
-          <div className="container px-4 md:px-6">
-            <div
-              className="flex flex-col items-center justify-center space-y-8 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                  Start Converting Your M4A Files
-                </h2>
-                <p
-                  className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Upload your audio files and watch them transform into accurate text transcriptions in real-time.
-                </p>
-              </div>
-
-              <FileUpload />
-
-              <p className="text-xs text-muted-foreground">
-                No credit card required • First 30 minutes free • Files automatically deleted after 24 hours
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* Hero Section */}
-        <section className="w-full py-6 md:py-24 lg:py-32 xl:py-48">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <Badge variant="secondary" className="mb-4">
+        <section className="relative w-full py-20 md:py-32 lg:py-40 overflow-hidden">
+          {/* Background Elements */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-indigo-600/5 to-purple-600/10 spotlight"></div>
+          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          
+          <div className="container px-4 md:px-6 relative z-10">
+            <div className="flex flex-col items-center space-y-8 text-center">
+              <div className="space-y-6 animate-fade-in-scale">
+                <Badge variant="secondary" className="mb-4 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200 hover-lift">
+                  <Sparkles className="w-3 h-3 mr-1 animate-float" />
                   AI-Powered Transcription
                 </Badge>
-                <h1
-                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-5xl">
                   Convert M4A Files to Text
-                  <span className="block text-primary">Instantly & Accurately</span>
+                  <span className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mt-2">
+                    Instantly & Accurately
+                  </span>
                 </h1>
-                <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+                <p className="mx-auto max-w-2xl text-lg md:text-xl text-gray-600 leading-relaxed">
                   Transform your M4A audio recordings into accurate text transcriptions in minutes. Perfect for
                   meetings, interviews, podcasts, and voice memos.
                 </p>
               </div>
-              <div className="space-x-4">
-                <a href="#pricing">
-                  <Button size="lg" className="h-12 px-8" variant="default">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Start Converting
-                  </Button>
-                </a>
-                <Link href="/demo">
-                  <Button variant="outline" size="lg" className="h-12 px-8 bg-transparent">
-                    Try Demo
-                  </Button>
-                </Link>
+              
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button size="lg" className="btn-gradient h-14 px-8 rounded-xl">
+                  <Upload className="mr-2 h-5 w-5" />
+                  Start Converting Now
+                </Button>
+                <Button variant="outline" size="lg" className="h-14 px-8 border-2 hover-lift focus-glow glass-card">
+                  <Star className="mr-2 h-4 w-4" />
+                  Try Demo
+                </Button>
               </div>
-              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                <div className="flex items-center">
-                  <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
+              
+              <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 pt-4">
+                <div className="flex items-center bg-white/60 px-4 py-2 rounded-full shadow-sm hover-lift">
+                  <CheckCircle className="mr-2 h-4 w-4 text-emerald-500 animate-float" />
                   No signup required
                 </div>
-                <div className="flex items-center">
-                  <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
+                <div className="flex items-center bg-white/60 px-4 py-2 rounded-full shadow-sm hover-lift">
+                  <CheckCircle className="mr-2 h-4 w-4 text-emerald-500 animate-float" />
                   Free for first 30 minutes
                 </div>
+                <div className="flex items-center bg-white/60 px-4 py-2 rounded-full shadow-sm hover-lift">
+                  <CheckCircle className="mr-2 h-4 w-4 text-emerald-500 animate-float" />
+                  Privacy guaranteed
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Interactive Upload Section */}
+        <section className="w-full py-16 md:py-24 bg-white relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-transparent"></div>
+          <div className="container px-4 md:px-6 relative z-10">
+            <div className="flex flex-col items-center justify-center space-y-8 text-center">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold tracking-tight md:text-4xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Start Converting Your M4A Files
+                </h2>
+                <p className="mx-auto max-w-2xl text-lg text-gray-600 leading-relaxed">
+                  Upload your audio files and watch them transform into accurate text transcriptions in real-time.
+                </p>
+              </div>
+
+              <div className="w-full max-w-4xl rounded-2xl glass-card">
+                <FileUpload />
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-500 pt-4">
+                <span className="flex items-center">
+                  <Shield className="mr-1 h-3 w-3" />
+                  Files automatically deleted after 24 hours
+                </span>
+                <span>•</span>
+                <span className="flex items-center">
+                  <Zap className="mr-1 h-3 w-3" />
+                  Lightning-fast AI processing
+                </span>
+                <span>•</span>
+                <span className="flex items-center">
+                  <CheckCircle className="mr-1 h-3 w-3" />
+                  95%+ accuracy rate
+                </span>
               </div>
             </div>
           </div>
         </section>
 
         {/* How It Works */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section className="w-full py-20 md:py-32 bg-gradient-to-b from-gray-50 to-white">
           <div className="container px-4 md:px-6">
-            <div
-              className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">How It Works</h2>
-                <p
-                  className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Convert your M4A files to text in just three simple steps
-                </p>
-              </div>
+            <div className="flex flex-col items-center justify-center space-y-6 text-center mb-16">
+              <Badge variant="outline" className="bg-white border-gray-200 text-gray-700">
+                Simple Process
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                How It Works
+              </h2>
+              <p className="max-w-2xl text-lg text-gray-600 leading-relaxed">
+                Convert your M4A files to text in just three simple steps
+              </p>
             </div>
-            <div
-              className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-              <Card className="text-center">
-                <CardHeader>
-                  <div
-                    className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                    <Upload className="h-6 w-6" />
+            
+            <div className="mx-auto grid max-w-6xl items-start gap-8 lg:grid-cols-3">
+              <Card className="text-center hover-lift border-0 shadow-lg bg-white/80 backdrop-blur-sm animate-fade-in-scale">
+                <CardHeader className="pb-4">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl transition-shadow mb-4">
+                    <Upload className="h-8 w-8" />
                   </div>
-                  <CardTitle>1. Upload Your M4A File</CardTitle>
+                  <div className="w-8 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto mb-4 rounded-full"></div>
+                  <CardTitle className="text-xl font-semibold">1. Upload Your M4A File</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>
-                    Simply drag and drop your M4A audio file or click to browse and select from your device.
+                  <CardDescription className="text-base text-gray-600 leading-relaxed">
+                    Simply drag and drop your M4A audio file or click to browse and select from your device. 
+                    Files up to 25MB supported.
                   </CardDescription>
                 </CardContent>
               </Card>
-              <Card className="text-center">
-                <CardHeader>
-                  <div
-                    className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                    <Zap className="h-6 w-6" />
+
+              <Card className="text-center hover-lift border-0 shadow-lg bg-white/80 backdrop-blur-sm animate-fade-in-scale">
+                <CardHeader className="pb-4">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-shadow mb-4">
+                    <Zap className="h-8 w-8" />
                   </div>
-                  <CardTitle>2. AI Processing</CardTitle>
+                  <div className="w-8 h-1 bg-gradient-to-r from-indigo-500 to-purple-600 mx-auto mb-4 rounded-full"></div>
+                  <CardTitle className="text-xl font-semibold">2. AI Processing</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>
-                    Our advanced AI analyzes your audio and converts speech to text with high accuracy and speed.
+                  <CardDescription className="text-base text-gray-600 leading-relaxed">
+                    Our advanced OpenAI Whisper AI analyzes your audio and converts speech to text with 
+                    industry-leading accuracy and speed.
                   </CardDescription>
                 </CardContent>
               </Card>
-              <Card className="text-center">
-                <CardHeader>
-                  <div
-                    className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                    <Download className="h-6 w-6" />
+
+              <Card className="text-center hover-lift border-0 shadow-lg bg-white/80 backdrop-blur-sm animate-fade-in-scale">
+                <CardHeader className="pb-4">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white shadow-lg hover:shadow-xl transition-shadow mb-4">
+                    <Download className="h-8 w-8" />
                   </div>
-                  <CardTitle>3. Download Text</CardTitle>
+                  <div className="w-8 h-1 bg-gradient-to-r from-purple-500 to-pink-600 mx-auto mb-4 rounded-full"></div>
+                  <CardTitle className="text-xl font-semibold">3. Download Text</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>
-                    Get your transcription in multiple formats: TXT, DOCX, or PDF. Edit and export as needed.
+                  <CardDescription className="text-base text-gray-600 leading-relaxed">
+                    Get your transcription instantly as clean, formatted text. Copy to clipboard or 
+                    download as TXT file for your projects.
                   </CardDescription>
                 </CardContent>
               </Card>
+            </div>
+
+            {/* Process Visualization */}
+            <div className="flex justify-center items-center mt-16 space-x-8 animate-slide-in-bottom">
+              <div className="hidden lg:flex items-center space-x-6">
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse-color"></div>
+                <div className="w-16 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 animate-shimmer"></div>
+                <div className="w-3 h-3 bg-indigo-500 rounded-full animate-pulse-color delay-500"></div>
+                <div className="w-16 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 animate-shimmer"></div>
+                <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse-color delay-1000"></div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Features */}
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div
-              className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Why Choose AudioScribe?</h2>
-                <p
-                  className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Powerful features designed to make audio transcription effortless and accurate
-                </p>
-              </div>
+        <section id="features" className="w-full py-20 md:py-32 bg-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 via-indigo-50/20 to-purple-50/30"></div>
+          <div className="container px-4 md:px-6 relative z-10">
+            <div className="flex flex-col items-center justify-center space-y-6 text-center mb-16">
+              <Badge variant="outline" className="bg-white border-blue-200 text-blue-700">
+                Key Benefits
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                Why Choose AudioScribe?
+              </h2>
+              <p className="max-w-2xl text-lg text-gray-600 leading-relaxed">
+                Powerful features designed to make audio transcription effortless and accurate
+              </p>
             </div>
-            <div
-              className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="grid gap-6">
-                  <div className="flex items-start space-x-4">
-                    <div
-                      className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                      <Clock className="h-5 w-5" />
+            
+            <div className="mx-auto grid max-w-7xl items-start gap-12 lg:grid-cols-2">
+              <div className="flex flex-col justify-center space-y-8">
+                <div className="grid gap-8">
+                  <div className="flex items-start space-x-5 group">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Clock className="h-7 w-7" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold">Lightning Fast</h3>
-                      <p className="text-muted-foreground">
-                        Convert hours of audio to text in minutes with our optimized AI processing.
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-2 text-gray-900">Lightning Fast</h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        Convert hours of audio to text in minutes with our optimized OpenAI Whisper processing.
+                        Real-time progress tracking keeps you informed.
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-4">
-                    <div
-                      className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                      <Type className="h-5 w-5" />
+                  
+                  <div className="flex items-start space-x-5 group">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Type className="h-7 w-7" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold">High Accuracy</h3>
-                      <p className="text-muted-foreground">
-                        {"95%+ accuracy rate with support for multiple languages and accents."}
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-2 text-gray-900">High Accuracy</h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        95%+ accuracy rate with support for multiple languages and accents. 
+                        Industry-leading AI ensures professional-quality transcriptions.
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-4">
-                    <div
-                      className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                      <Shield className="h-5 w-5" />
+                  
+                  <div className="flex items-start space-x-5 group">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Shield className="h-7 w-7" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold">Secure & Private</h3>
-                      <p className="text-muted-foreground">
-                        Your files are encrypted and automatically deleted after processing. Complete privacy
-                        guaranteed.
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-2 text-gray-900">Secure & Private</h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        Your files are encrypted and automatically deleted after 24 hours. 
+                        Complete privacy guaranteed with enterprise-grade security.
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-center">
-                <div className="relative">
-                  <div
-                    className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg blur-3xl" />
-                  <Card className="relative w-full max-w-md">
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <FileAudio className="mr-2 h-5 w-5" />
+              
+              <div className="flex items-center justify-center lg:justify-end">
+                <div className="relative group hover-lift">
+                  <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-purple-500/20 rounded-2xl blur-2xl group-hover:blur-3xl transition-all opacity-75 animate-pulse-color"></div>
+                  <Card className="relative w-full max-w-md shadow-2xl border-0 bg-white/90 backdrop-blur-sm transition-all duration-300 animate-fade-in-scale">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="flex items-center text-lg font-semibold">
+                        <FileAudio className="mr-3 h-6 w-6 text-blue-600" />
                         meeting-recording.m4a
                       </CardTitle>
-                      <CardDescription>2.3 MB • 15:42 duration</CardDescription>
+                      <CardDescription className="text-gray-500">2.3 MB • 15:42 duration</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="w-full bg-secondary rounded-full h-2">
-                          <div className="bg-primary h-2 rounded-full w-3/4"></div>
+                    <CardContent className="space-y-5">
+                      <div className="space-y-3">
+                        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full w-3/4 animate-pulse shadow-sm animate-shimmer"></div>
                         </div>
-                        <p className="text-sm text-muted-foreground">{"Processing... 75% complete"}</p>
-                        <div className="bg-muted p-3 rounded text-sm">
-                          <p className="font-medium">Preview:</p>
-                          <p className="text-muted-foreground mt-1">
-                            {
-                              "\"Good morning everyone, let's start today's meeting by reviewing the quarterly results...\""
-                            }
-                          </p>
-                        </div>
+                        <p className="text-sm font-medium text-blue-600 animate-pulse-color">Processing... 75% complete</p>
+                      </div>
+                      
+                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200">
+                        <p className="font-semibold text-gray-900 mb-2 flex items-center">
+                          <Sparkles className="w-4 h-4 mr-2 text-blue-500 animate-float" />
+                          <span className="animate-gradient">Live Preview:</span>
+                        </p>
+                        <p className="text-gray-700 text-sm leading-relaxed italic">
+                          "Good morning everyone, let's start today's meeting by reviewing the quarterly results and discussing our upcoming product launch strategy..."
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
@@ -264,20 +313,66 @@ export default function HomePage() {
         <PricingSection />
       </main>
       {/* Footer */}
-      <footer
-        className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">© 2024 AudioScribe. All rights reserved.</p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Terms of Service
-          </Link>
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Privacy Policy
-          </Link>
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Support
-          </Link>
-        </nav>
+      <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
+        <div className="container px-4 md:px-6 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center mb-4">
+                <FileAudio className="h-8 w-8 mr-3 text-blue-400" />
+                <span className="font-bold text-2xl bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">AudioScribe</span>
+              </div>
+              <p className="text-gray-400 leading-relaxed max-w-md">
+                Transform your M4A audio files into accurate text transcriptions with AI-powered precision. 
+                Simple, secure, and professional.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4 text-white">Product</h4>
+              <nav className="flex flex-col space-y-2">
+                <Link className="text-gray-400 hover:text-white transition-colors" href="#features">
+                  Features
+                </Link>
+                <Link className="text-gray-400 hover:text-white transition-colors" href="#pricing">
+                  Pricing
+                </Link>
+                <Link className="text-gray-400 hover:text-white transition-colors" href="#">
+                  API Access
+                </Link>
+              </nav>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4 text-white">Support</h4>
+              <nav className="flex flex-col space-y-2">
+                <Link className="text-gray-400 hover:text-white transition-colors" href="#">
+                  Help Center
+                </Link>
+                <Link className="text-gray-400 hover:text-white transition-colors" href="#">
+                  Contact Us
+                </Link>
+                <Link className="text-gray-400 hover:text-white transition-colors" href="#">
+                  Status
+                </Link>
+              </nav>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
+            <p className="text-sm text-gray-400">© 2024 AudioScribe. All rights reserved.</p>
+            <nav className="flex gap-6 mt-4 sm:mt-0">
+              <Link className="text-sm text-gray-400 hover:text-white transition-colors" href="#">
+                Terms of Service
+              </Link>
+              <Link className="text-sm text-gray-400 hover:text-white transition-colors" href="#">
+                Privacy Policy
+              </Link>
+              <Link className="text-sm text-gray-400 hover:text-white transition-colors" href="#">
+                Cookie Policy
+              </Link>
+            </nav>
+          </div>
+        </div>
       </footer>
     </div>
   );
