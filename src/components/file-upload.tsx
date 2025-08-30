@@ -3,7 +3,7 @@ import { useState, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Upload, FileAudio, X, CheckCircle, AlertCircle, Loader2, Download } from "lucide-react"
+import { Upload, FileAudio, X, CheckCircle, AlertCircle, Loader2, Download, RotateCcw } from "lucide-react"
 
 export default function FileUpload() {
   const [isDragOver, setIsDragOver] = useState(false)
@@ -63,6 +63,7 @@ export default function FileUpload() {
       })
 
       const uploadData = await uploadResponse.json()
+
 
       if (!uploadResponse.ok) {
         throw new Error(uploadData.error || 'Failed to get upload URL')
@@ -281,6 +282,29 @@ export default function FileUpload() {
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId))
   }
 
+  const retryFile = useCallback((fileId) => {
+    setUploadedFiles((prev) =>
+      prev.map((f) =>
+        f.id === fileId
+          ? {
+              ...f,
+              status: "preparing",
+              progress: 0,
+              error: undefined,
+              transcription: undefined,
+              jobId: undefined,
+            }
+          : f
+      )
+    )
+    
+    // Find the file and restart processing
+    const fileToRetry = uploadedFiles.find((f) => f.id === fileId)
+    if (fileToRetry) {
+      processFileWithAPI(fileId, fileToRetry.file)
+    }
+  }, [uploadedFiles, processFileWithAPI])
+
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -444,9 +468,20 @@ export default function FileUpload() {
                 {/* Error Display */}
                 {uploadedFile.status === "error" && uploadedFile.error && (
                   <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                    <div className="flex items-center mb-2">
-                      <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                      <p className="font-semibold text-red-700">Processing Error</p>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center">
+                        <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                        <p className="font-semibold text-red-700">Processing Error</p>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="bg-white hover:bg-red-50 border-red-300 text-red-700 hover:text-red-800"
+                        onClick={() => retryFile(uploadedFile.id)}
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Retry
+                      </Button>
                     </div>
                     <p className="text-sm text-red-600 leading-relaxed">{uploadedFile.error}</p>
                   </div>
