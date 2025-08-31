@@ -43,9 +43,6 @@ export default function RootLayout({ children }) {
                               <Link href="/subscription" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                                   Subscription
                               </Link>
-                              <Link href="/test-integration" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                                  Test
-                              </Link>
                           </nav>
                       </SignedIn>
                   </div>

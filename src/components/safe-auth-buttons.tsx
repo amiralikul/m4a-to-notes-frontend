@@ -4,10 +4,6 @@ import {SignInButton, SignUpButton, UserButton, useAuth, useClerk} from "@clerk/
 
 export function SafeAuthButtons() {
   const { isLoaded, isSignedIn } = useAuth();
-  const { openSignIn, openSignUp } = useClerk();
-
-  console.log("isLoaded", isLoaded);
-  console.log("isSignedIn", isSignedIn);
   
   // Show loading skeleton while auth state is being determined
   if (!isLoaded) {
