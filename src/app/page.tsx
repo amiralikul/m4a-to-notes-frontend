@@ -31,22 +31,22 @@ export default function HomePage() {
         <nav className="ml-auto flex gap-6 sm:gap-8">
           <Link
             className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
-            href="#features">
+            href="/features">
             Features
           </Link>
           <Link
             className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
-            href="#pricing">
+            href="/pricing">
             Pricing
           </Link>
           <Link
             className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
-            href="#about">
+            href="/about">
             About
           </Link>
           <Link
             className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
-            href="#contact">
+            href="/contact">
             Contact
           </Link>
         </nav>
@@ -289,13 +289,13 @@ export default function HomePage() {
             <div>
               <h4 className="font-semibold mb-4 text-white">Product</h4>
               <nav className="flex flex-col space-y-2">
-                <Link className="text-gray-400 hover:text-white transition-colors" href="#features">
+                <Link className="text-gray-400 hover:text-white transition-colors" href="/features">
                   Features
                 </Link>
-                <Link className="text-gray-400 hover:text-white transition-colors" href="#pricing">
+                <Link className="text-gray-400 hover:text-white transition-colors" href="/pricing">
                   Pricing
                 </Link>
-                <Link className="text-gray-400 hover:text-white transition-colors" href="#">
+                <Link className="text-gray-400 hover:text-white transition-colors" href="/contact">
                   API Access
                 </Link>
               </nav>
@@ -304,14 +304,14 @@ export default function HomePage() {
             <div>
               <h4 className="font-semibold mb-4 text-white">Support</h4>
               <nav className="flex flex-col space-y-2">
-                <Link className="text-gray-400 hover:text-white transition-colors" href="#">
+                <Link className="text-gray-400 hover:text-white transition-colors" href="/contact">
                   Help Center
                 </Link>
-                <Link className="text-gray-400 hover:text-white transition-colors" href="#">
+                <Link className="text-gray-400 hover:text-white transition-colors" href="/contact">
                   Contact Us
                 </Link>
-                <Link className="text-gray-400 hover:text-white transition-colors" href="#">
-                  Status
+                <Link className="text-gray-400 hover:text-white transition-colors" href="/about">
+                  About Us
                 </Link>
               </nav>
             </div>
