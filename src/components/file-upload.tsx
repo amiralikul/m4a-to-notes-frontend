@@ -46,81 +46,37 @@ export default function FileUpload() {
 
   const processFileWithAPI = useCallback(async (fileId, file) => {
     try {
-      // Step 1: Get presigned upload URL
+      // Single upload and process request
       setUploadedFiles((prev) =>
-        prev.map((f) => f.id === fileId ? { ...f, status: "preparing", progress: 5 } : f)
+        prev.map((f) => f.id === fileId ? { ...f, status: "uploading", progress: 10 } : f)
       )
 
-      const uploadResponse = await fetch('/api/uploads', {
+      const formData = new FormData()
+      formData.append('audio', file)
+
+      const response = await fetch('/api/upload-and-process', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileName: file.name,
-          contentType: file.type || 'audio/m4a'
-        }),
+        body: formData,
       })
 
-      const uploadData = await uploadResponse.json()
+      const result = await response.json()
 
-
-      if (!uploadResponse.ok) {
-        throw new Error(uploadData.error || 'Failed to get upload URL')
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to upload and process file')
       }
 
-      // Step 2: Upload directly to R2
-      setUploadedFiles((prev) =>
-        prev.map((f) => f.id === fileId ? { ...f, status: "uploading", progress: 20 } : f)
-      )
-
-      const r2Response = await fetch(uploadData.uploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type || 'audio/m4a'
-        },
-      })
-
-      if (!r2Response.ok) {
-        throw new Error('Failed to upload file to storage')
-      }
-
-      // Step 3: Create transcription job
-      setUploadedFiles((prev) =>
-        prev.map((f) => f.id === fileId ? { ...f, status: "creating_job", progress: 40 } : f)
-      )
-
-      const jobResponse = await fetch('/api/jobs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          objectKey: uploadData.objectKey,
-          fileName: file.name,
-          source: 'web'
-        }),
-      })
-
-      const jobData = await jobResponse.json()
-
-      if (!jobResponse.ok) {
-        throw new Error(jobData.error || 'Failed to create transcription job')
-      }
-
-      // Step 4: Poll for job completion
+      // Update with job ID and start polling
       setUploadedFiles((prev) =>
         prev.map((f) => f.id === fileId ? { 
           ...f, 
           status: "processing", 
-          progress: 50, 
-          jobId: jobData.jobId 
+          progress: 20, 
+          jobId: result.jobId 
         } : f)
       )
 
       // Start polling for job status
-      pollJobStatus(fileId, jobData.jobId)
+      pollJobStatus(fileId, result.jobId)
 
     } catch (error) {
       console.error('Upload error:', error)
@@ -131,7 +87,7 @@ export default function FileUpload() {
                 ...f,
                 status: "error",
                 progress: 0,
-                error: error.message || 'Network error. Please try again.',
+                error: error.message || 'Failed to upload file. Please try again.',
               }
             : f
         )
@@ -251,7 +207,7 @@ export default function FileUpload() {
         const uploadedFile = {
           file,
           id: fileId,
-          status: "preparing",
+          status: "uploading",
           progress: 0,
         }
 
@@ -288,7 +244,7 @@ export default function FileUpload() {
         f.id === fileId
           ? {
               ...f,
-              status: "preparing",
+              status: "uploading",
               progress: 0,
               error: undefined,
               transcription: undefined,
@@ -319,16 +275,12 @@ export default function FileUpload() {
 
   const getStatusText = (status) => {
     switch (status) {
-      case "preparing":
-        return "Getting upload URL...";
       case "uploading":
-        return "Uploading to cloud storage...";
-      case "creating_job":
-        return "Creating transcription job...";
+        return "Uploading...";
       case "processing":
-        return "Transcribing with AI...";
+        return "Processing...";
       case "completed":
-        return "Transcription completed"
+        return "Completed"
       case "error":
         return "Error occurred"
       default:
@@ -450,7 +402,7 @@ export default function FileUpload() {
                     <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                       <div 
                         className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500 shadow-sm animate-shimmer"
-                        style={{ width: `${uploadedFile.progress || 10}%` }}
+                        style={{ width: `${uploadedFile.progress || 5}%` }}
                       ></div>
                     </div>
                     <div className="flex items-center space-x-2">

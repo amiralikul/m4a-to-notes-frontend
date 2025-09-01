@@ -1,55 +1,14 @@
 /** @type {import('next').NextConfig} */
+
+// Clean environment-based configuration
+const WORKER_BASE = process.env.NODE_ENV === 'production' 
+  ? 'https://m4a-to-notes.productivity-tools.workers.dev/api'
+  : 'http://localhost:8787/api';
+
 const nextConfig = {
   async rewrites() {
     return [
-      // Frontend-specific API routes (handled by Next.js)
-      // These routes should NOT be proxied to the Worker:
-      // - /api/webhook (Paddle webhooks)
-      // - /api/me/* (User-specific endpoints)
-      
-      // Proxy other API routes to Worker
-      {
-        source: '/api/transcribe',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/transcribe' : 'http://localhost:8787/api/transcribe',
-      },
-      {
-        source: '/api/uploads',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/uploads' : 'http://localhost:8787/api/uploads',
-      },
-      {
-        source: '/api/jobs',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/jobs' : 'http://localhost:8787/api/jobs',
-      },
-      {
-        source: '/api/jobs/',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/jobs' : 'http://localhost:8787/api/jobs',
-      },
-      {
-        source: '/api/jobs/:path*',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/jobs/:path*' : 'http://localhost:8787/api/jobs/:path*',
-      },
-      {
-        source: '/api/transcripts/:path*',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/transcripts/:path*' : 'http://localhost:8787/api/transcripts/:path*',
-      },
-      {
-        source: '/api/health',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/health' : 'http://localhost:8787/api/health',
-      },
-      {
-        source: '/api/debug/:path*',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/debug/:path*' : 'http://localhost:8787/api/debug/:path*',
-      },
-      // Internal entitlements endpoints (for server-side calls)
-      {
-        source: '/api/entitlements/:path*',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/entitlements/:path*' : 'http://localhost:8787/api/entitlements/:path*',
-      },
-      // Paddle subscription management endpoints
-      {
-        source: '/api/paddle/:path*',
-        destination: process.env.NODE_ENV === 'production' ? 'https://m4a-to-notes.productivity-tools.workers.dev/api/paddle/:path*' : 'http://localhost:8787/api/paddle/:path*',
-      },
+      // PostHog analytics proxying
       {
         source: '/ingest/static/:path*',
         destination: 'https://eu-assets.i.posthog.com/static/:path*',
@@ -58,9 +17,23 @@ const nextConfig = {
         source: '/ingest/:path*',
         destination: 'https://eu.i.posthog.com/:path*',
       },
+      
+      // Worker API proxying - consolidated and clean
+      // Local routes (/api/me/*, /api/webhook, /api/validate-purchase) handled by Next.js
+      
+      // Exact matches
+      { source: '/api/transcribe', destination: `${WORKER_BASE}/transcribe` },
+      { source: '/api/upload-and-process', destination: `${WORKER_BASE}/upload-and-process` },
+      { source: '/api/health', destination: `${WORKER_BASE}/health` },
+      
+      // Path matches
+      { source: '/api/jobs/:path*', destination: `${WORKER_BASE}/jobs/:path*` },
+      { source: '/api/transcripts/:path*', destination: `${WORKER_BASE}/transcripts/:path*` },
+      { source: '/api/debug/:path*', destination: `${WORKER_BASE}/debug/:path*` },
+      { source: '/api/entitlements/:path*', destination: `${WORKER_BASE}/entitlements/:path*` },
+      { source: '/api/paddle/:path*', destination: `${WORKER_BASE}/paddle/:path*` },
     ];
   },
-  // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
 };
 
