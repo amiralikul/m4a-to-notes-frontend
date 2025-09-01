@@ -11,16 +11,16 @@ export const HeroSection = () => {
     const { openSignIn, openSignUp } = useClerk();
     return (
         <section className="relative w-full py-20 md:py-32 lg:py-40 overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-indigo-600/5 to-purple-600/10 spotlight"></div>
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        
+        {/* Background Elements (no motion) */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-indigo-600/5 to-purple-600/10"></div>
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl"></div>
+
         <div className="container px-4 md:px-6 relative z-10">
           <div className="flex flex-col items-center space-y-8 text-center">
-            <div className="space-y-6 animate-fade-in-scale">
-              <Badge variant="secondary" className="mb-4 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200 hover-lift">
-                <Sparkles className="w-3 h-3 mr-1 animate-float" />
+            <div className="space-y-6">
+              <Badge variant="secondary" className="mb-4 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-200">
+                <Sparkles className="w-3 h-3 mr-1" />
                 AI-Powered Transcription
               </Badge>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-5xl">
@@ -43,12 +43,12 @@ export const HeroSection = () => {
             </div>
             
             <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 pt-4">
-              <div className="flex items-center bg-white/60 px-4 py-2 rounded-full shadow-sm hover-lift">
-                <CheckCircle className="mr-2 h-4 w-4 text-emerald-500 animate-float" />
+              <div className="flex items-center bg-white/60 px-4 py-2 rounded-full shadow-sm">
+                <CheckCircle className="mr-2 h-4 w-4 text-emerald-500" />
                 Free for first 30 minutes
               </div>
-              <div className="flex items-center bg-white/60 px-4 py-2 rounded-full shadow-sm hover-lift">
-                <CheckCircle className="mr-2 h-4 w-4 text-emerald-500 animate-float" />
+              <div className="flex items-center bg-white/60 px-4 py-2 rounded-full shadow-sm">
+                <CheckCircle className="mr-2 h-4 w-4 text-emerald-500" />
                 Privacy guaranteed
               </div>
             </div>

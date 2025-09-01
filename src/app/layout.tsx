@@ -1,10 +1,9 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import {ClerkProvider, SignedIn, SignedOut} from "@clerk/nextjs";
+import {ClerkProvider} from "@clerk/nextjs";
 import { PaddleProvider } from "../components/paddle-provider";
-import { SafeAuthButtons } from "../components/safe-auth-buttons";
-import Link from "next/link";
+import { SiteHeader } from "../components/site-header";
 
 
 const geistSans = Geist({
@@ -27,30 +26,37 @@ export default function RootLayout({ children }) {
       <ClerkProvider
         appearance={{
           baseTheme: undefined,
-          variables: { colorPrimary: "#6c47ff" }
+          // Global design tokens to align Clerk UI with our site styles
+          variables: {
+            colorPrimary: "#6c47ff",
+            colorText: "#111827",
+            colorBackground: "#ffffff",
+            borderRadius: "0.75rem",
+            fontFamily: "var(--font-geist-sans)"
+          },
+          // Tailwind class overrides for Clerk elements
+          elements: {
+            // Modal backdrop slightly darkened
+            modalBackdrop: "bg-black/30 backdrop-blur-sm",
+            card: "shadow-xl border border-gray-200 rounded-2xl",
+            headerTitle: "text-gray-900",
+            headerSubtitle: "text-gray-600",
+            formFieldLabel: "text-sm text-gray-700",
+            formFieldInput: "h-11 rounded-xl border-gray-300 focus:ring-2 focus:ring-[#6c47ff] focus:border-[#6c47ff]",
+            formFieldHintText: "text-xs text-gray-500",
+            formButtonPrimary:
+              "bg-[#6c47ff] hover:bg-[#5a3ee6] text-white rounded-full h-11 px-5 transition-colors",
+            formButtonReset: "text-gray-600 hover:text-gray-900",
+            footerActionText: "text-gray-600",
+            footerActionLink: "text-[#6c47ff] hover:text-[#5a3ee6]",
+            socialButtons: "hidden"
+          }
         }}
       >
           <html lang="en">
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <PaddleProvider>
-              <header className="flex justify-between items-center p-4 h-16 border-b">
-                  <div className="flex items-center gap-8">
-                      <Link href="/" className="text-xl font-bold">
-                          AudioScribe
-                      </Link>
-                      <SignedIn>
-                          <nav className="flex items-center gap-4">
-                              <Link href="/subscription" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                                  Subscription
-                              </Link>
-                          </nav>
-                      </SignedIn>
-                  </div>
-                  
-                  <div className="flex items-center gap-4">
-                      <SafeAuthButtons />
-                  </div>
-              </header>
+              <SiteHeader />
               {children}
           </PaddleProvider>
           </body>

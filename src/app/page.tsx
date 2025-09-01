@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Upload, FileAudio, Type, Download, Clock, Shield, Zap, CheckCircle, Star, Sparkles } from "lucide-react"
@@ -19,38 +18,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 bg-grid-slate-100">
-      {/* Header */}
-      <header className="px-4 lg:px-6 h-16 flex items-center border-b bg-white/70 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-        <Link className="flex items-center justify-center group" href="/">
-          <div className="relative">
-            <FileAudio className="h-7 w-7 mr-3 text-blue-600 group-hover:text-blue-700 transition-colors" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
-          </div>
-          <span className="font-bold text-xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">AudioScribe</span>
-        </Link>
-        <nav className="ml-auto flex gap-6 sm:gap-8">
-          <Link
-            className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
-            href="/features">
-            Features
-          </Link>
-          <Link
-            className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
-            href="/pricing">
-            Pricing
-          </Link>
-          <Link
-            className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
-            href="/about">
-            About
-          </Link>
-          <Link
-            className="text-sm font-medium hover:text-blue-600 transition-colors duration-200 relative fancy-underline"
-            href="/contact">
-            Contact
-          </Link>
-        </nav>
-      </header>
       <main className="flex-1">
         {/* Hero Section */}
         {!isSignedIn && <HeroSection />}
