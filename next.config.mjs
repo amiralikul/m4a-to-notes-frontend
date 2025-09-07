@@ -23,7 +23,6 @@ const nextConfig = {
 			// Local routes (/api/me/*, /api/webhook, /api/validate-purchase) handled by Next.js
 
 			// Exact matches
-			{ source: "/api/transcribe", destination: `${WORKER_BASE}/transcribe` },
 			{
 				source: "/api/upload-and-process",
 				destination: `${WORKER_BASE}/upload-and-process`,
