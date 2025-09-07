@@ -28,7 +28,6 @@ import {
 
 export default function HomePage() {
 	const { isSignedIn } = useUser();
-	const { openSignIn, openSignUp } = useClerk();
 
 	return (
 		<div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 bg-grid-slate-100">
@@ -368,19 +367,19 @@ export default function HomePage() {
 						<nav className="flex gap-6 mt-4 sm:mt-0">
 							<Link
 								className="text-sm text-gray-400 hover:text-white transition-colors"
-								href="#"
+								href="/terms"
 							>
 								Terms of Service
 							</Link>
 							<Link
 								className="text-sm text-gray-400 hover:text-white transition-colors"
-								href="#"
+								href="/privacy"
 							>
 								Privacy Policy
 							</Link>
 							<Link
 								className="text-sm text-gray-400 hover:text-white transition-colors"
-								href="#"
+								href="/cookies"
 							>
 								Cookie Policy
 							</Link>
