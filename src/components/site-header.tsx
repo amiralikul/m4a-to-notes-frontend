@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SafeAuthButtons } from "./safe-auth-buttons";
+import { useUser } from "@clerk/nextjs";
 
 export function SiteHeader() {
 	const [scrolled, setScrolled] = useState(false);
-
+	const { isSignedIn } = useUser();
 	useEffect(() => {
 		const onScroll = () => {
 			setScrolled(window.scrollY > 4);
@@ -54,7 +55,12 @@ export function SiteHeader() {
 					</Link>
 				</nav>
 
+
+
 				<div className="ml-auto flex items-center gap-4">
+					{isSignedIn && <Link href="/subscription" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+						Subscription
+					</Link>}
 					<SafeAuthButtons />
 				</div>
 			</div>
